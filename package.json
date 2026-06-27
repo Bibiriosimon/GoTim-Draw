@@ -1,0 +1,46 @@
+{
+  "name": "gotim-drawer",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Agent-controlled visual workspace built with React, tldraw, and a JSON command API.",
+  "type": "module",
+  "engines": {
+    "node": ">=18",
+    "npm": ">=9"
+  },
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:web": "vite",
+    "dev:api": "node --watch server/index.mjs",
+    "build": "tsc -b && vite build",
+    "check": "npm run build",
+    "start": "node server/index.mjs"
+  },
+  "keywords": [
+    "tldraw",
+    "canvas",
+    "agent",
+    "coding-agent",
+    "visual-workspace",
+    "education"
+  ],
+  "dependencies": {
+    "@tldraw/editor": "^4.5.12",
+    "@tldraw/tlschema": "^4.5.12",
+    "caniuse-lite": "^1.0.30001799",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "lucide-react": "^1.17.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "tldraw": "^4.5.12"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.5.0",
+    "concurrently": "^9.1.2",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5"
+  }
+}

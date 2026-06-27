@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GOTIM DRAWER Help</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#eef2ff;color:#1e1b4b;font-family:Inter,"Microsoft YaHei",system-ui,sans-serif}
+    a{color:#4f46e5}code,pre,textarea{font-family:Consolas,"JetBrains Mono",monospace}
+    .layout{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:100vh}
+    nav{position:sticky;top:0;height:100vh;padding:28px 22px;background:#1e1b4b;color:#eef2ff}
+    nav h1{margin:0 0 8px;font-size:20px}nav p{color:#c7d2fe;font-size:12px;line-height:1.7}
+    nav a{display:block;padding:8px 0;color:#e0e7ff;text-decoration:none;font-size:12px}
+    main{max-width:1120px;padding:42px 52px 80px}
+    h1{letter-spacing:-.03em}h2{margin-top:44px;border-bottom:1px solid #c7d2fe;padding-bottom:10px}
+    p,li{line-height:1.75;font-size:14px}.hero,.card,.tester{padding:22px;background:#fff;border:1px solid #c7d2fe;border-radius:10px;box-shadow:0 10px 28px rgba(30,27,75,.08)}
+    .hero h1{margin-top:0;font-size:34px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .card h3{margin:0 0 8px}.status{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.badge{padding:7px 10px;background:#eef2ff;border-radius:8px;font-size:12px}.online{color:#166534;background:#dcfce7}
+    pre{padding:14px;overflow:auto;color:#dcfce7;background:#111827;border-radius:10px;font-size:12px;line-height:1.6}
+    table{width:100%;border-collapse:collapse;background:#fff}th,td{padding:10px;border:1px solid #c7d2fe;text-align:left;font-size:12px;vertical-align:top}
+    textarea{width:100%;min-height:220px;padding:14px;border:1px solid #a5b4fc;border-radius:8px;resize:vertical}
+    button{margin-top:10px;padding:9px 14px;color:#fff;background:#4f46e5;border:0;border-radius:8px;cursor:pointer}button:hover{background:#4338ca}
+    .warning{padding:12px;color:#7c2d12;background:#ffedd5;border-radius:8px}.callout{padding:14px;background:#fff7ed;border-left:4px solid #f97316;border-radius:8px}
+    #result{white-space:pre-wrap}@media(max-width:900px){.layout{display:block}nav{position:static;height:auto}main{padding:24px 16px}.grid,.grid.two{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <nav>
+    <h1>GOTIM DRAWER</h1>
+    <p>一个面向讲题、绘画、棋盘互动和 AI Coding 现场创造的可编辑画板。</p>
+    <a href="#start">开始</a>
+    <a href="#problem">题目批改</a>
+    <a href="#waiting">等待动画</a>
+    <a href="#agent">AI Coding Skill</a>
+    <a href="#board">棋类扩展</a>
+    <a href="#manual">手绘识别规划</a>
+    <a href="#tester">在线测试</a>
+    <a href="/agent.md">Agent Skill</a>
+    <a href="/api/capabilities">能力 JSON</a>
+    <a href="/">返回画板</a>
+  </nav>
+  <main>
+    <section class="hero" id="start">
+      <h1>画板既是工具，也是说明书</h1>
+      <p>其他 AI Coding 第一次使用时，不需要你再解释上下文。让它读取 <code>/agent.md</code> 或 <code>/api/capabilities</code>，它就能知道如何连接画板、发送命令、讲题、绘画、做棋类扩展。</p>
+      <div class="status"><span class="badge" id="service">正在检查服务...</span><span class="badge" id="clients">正在检查画布连接...</span></div>
+    </section>
+
+    <h2 id="problem">1. 题目批改与图解讲题</h2>
+    <div class="grid two">
+      <section class="card">
+        <h3>视觉结构</h3>
+        <p>推荐采用“原题层 + 重构图 + 推导区 + 结论区”。原题图保留在左侧或上方，AI 在图上圈出已知条件，再用可编辑图形重新画出干净示意图。</p>
+        <ul>
+          <li>左侧：题目截图、条件高亮、箭头指向关键量。</li>
+          <li>中间：重新绘制的几何/物理示意图。</li>
+          <li>右侧：公式、推导、易错点。</li>
+          <li>底部：函数图、答案、单位检查。</li>
+        </ul>
+      </section>
+      <section class="card">
+        <h3>Python 的角色</h3>
+        <p>Python 适合做精确计算，不适合作为最终静态截图输出。让 Python 计算采样点、极值、交点、坐标，再转换为画板命令。</p>
+        <pre>Python/SymPy/NumPy
+-> points, labels, extrema
+-> createDraw / createLine / createText
+-> editable canvas result</pre>
+      </section>
+    </div>
+    <div class="callout">
+      示例：带电环轴线上电场。AI 可以推导 <code>E(x)=kQx/(x^2+R^2)^(3/2)</code>，用 Python 找到最大值 <code>x=R/sqrt(2)</code>，再在画板上画环、轴线、P 点、公式区和红色函数曲线。
+    </div>
+
+    <div class="callout">
+      <strong>公式书写规则：</strong>公式不要用普通 <code>createText</code> 写成 <code>sqrt(...)</code>、<code>R^2</code>、<code>R^3</code> 或很长的一整行推导。AI Coding 应优先使用 <code>createFormula</code>，例如
+      <code>v_1 = sqrt(GM/R)</code> 会在画板中规范成更易读的 <code>v₁ = √(GM/R)</code>，<code>M/R^3 -> GM/R = G*(M/R^3)*R^2</code> 会规范成带上标和箭头的形式。长推导应拆成多行。
+    </div>
+
+    <h2 id="waiting">2. 等待动画与临时思考层</h2>
+    <p>等待时展示“产品状态”，不要展示真实内部思维链。推荐状态包括：读题、提取已知量、规划布局、计算曲线、检查重叠、应用画板。</p>
+    <table>
+      <tr><th>层级</th><th>作用</th><th>是否进入最终画板</th></tr>
+      <tr><td>DOM 工作条</td><td>稳定显示当前进度，不影响画布对象。</td><td>否</td></tr>
+      <tr><td>临时草稿卡片</td><td>让用户看到 AI 正在规划布局和步骤。</td><td>否，最终绘制前清除</td></tr>
+      <tr><td>最终命令</td><td>真正生成可回放、可编辑内容。</td><td>是</td></tr>
+    </table>
+    <p class="warning">临时草稿只用于缓解等待疲劳，不应被当作答案或最终绘画内容。</p>
+
+    <h2 id="agent">3. AI Coding 第一次使用命令</h2>
+    <p>把下面这段直接发给其他 AI Coding：</p>
+    <pre>Use GOTIM DRAWER to complete this visual task. Before doing anything, read:
+http://localhost:5173/agent.md
+
+Then check http://localhost:8787/api/health, read /api/capabilities, and use /api/commands/batch to send replayable canvas commands. Do not manipulate DOM or tldraw store directly. Do not clear the canvas unless I explicitly ask you to replace it.</pre>
+    <p>如果是题目讲解，加一句：</p>
+    <pre>For this problem, build a teacher-style visual explanation: original problem, highlighted conditions, clean reconstructed diagram, formula derivation, and final answer. Use Python only to compute accurate plot points or extrema, then convert them to editable canvas commands.</pre>
+
+    <h2 id="board">4. 棋类与现场编程扩展</h2>
+    <div class="grid two">
+      <section class="card">
+        <h3>五子棋当前能力</h3>
+        <ul>
+          <li>15 x 15 交叉点棋盘。</li>
+          <li>用户点击落子，AI 自动回应。</li>
+          <li>横、竖、斜五连胜负判断。</li>
+          <li>画板同步绘制棋盘、棋子和胜利线。</li>
+        </ul>
+      </section>
+      <section class="card">
+        <h3>新棋类工作流</h3>
+        <ol>
+          <li>搜索或确认规则。</li>
+          <li>定义棋盘、棋子、合法走法、胜负条件。</li>
+          <li>先实现最小规则引擎。</li>
+          <li>再实现画板 UI 和策略讲解。</li>
+          <li>把规则写入 <code>/agent.md</code> 和 <code>/api/capabilities</code>。</li>
+        </ol>
+      </section>
+    </div>
+
+    <h2 id="manual">5. 用户手绘识别到后端 Agent</h2>
+    <p>未来画板不仅由 Agent 绘制，也可以理解用户手绘。当前前端已经会向后端同步 shape summary，这是手绘识别的入口。</p>
+    <table>
+      <tr><th>阶段</th><th>做法</th><th>应用</th></tr>
+      <tr><td>当前</td><td><code>GET /api/canvas/shapes</code> 读取画布对象、文字、边界、points。</td><td>让 Agent 理解现有画布。</td></tr>
+      <tr><td>下一步</td><td>加入选区/最近手绘 shape 分析。</td><td>定点讲题、局部修改。</td></tr>
+      <tr><td>进阶</td><td>识别手绘箭头、圈选、函数草图、轮廓。</td><td>画画比赛、AI 纠错、协作绘画。</td></tr>
+    </table>
+    <p class="warning">性能策略：不要逐点实时传输用户指针事件。使用停笔 debounce、选区分析或手动触发识别。</p>
+
+    <h2>实时能力 JSON</h2>
+    <pre id="capabilities">正在读取...</pre>
+
+    <h2 id="tester">在线测试命令</h2>
+    <div class="tester">
+      <textarea id="payload">{"commands":[
+  {"type":"createText","x":80,"y":40,"text":"GOTIM DRAWER test","color":"violet","size":"xl","step":0,"stepTitle":"Title"},
+  {"type":"createLine","points":[{"x":100,"y":210},{"x":100,"y":120},{"x":260,"y":210},{"x":100,"y":210}],"color":"blue","size":"l","step":1,"stepTitle":"Diagram"},
+  {"type":"createFormula","x":100,"y":260,"text":"a^2 + b^2 = c^2","color":"black","size":"xl","step":2,"stepTitle":"Formula"},
+  {"type":"zoomToFit","step":3,"stepTitle":"Fit"}
+]}</textarea>
+      <button id="send">发送到画板</button>
+      <pre id="result">等待测试...</pre>
+    </div>
+  </main>
+</div>
+<script>
+  const pretty = (value) => JSON.stringify(value, null, 2)
+  async function load() {
+    try {
+      const health = await fetch('/api/health').then(r => r.json())
+      const caps = await fetch('/api/capabilities').then(r => r.json())
+      service.textContent = health.ok ? '控制服务在线' : '控制服务异常'
+      service.classList.toggle('online', health.ok)
+      clients.textContent = health.clients ? `已连接画布：${health.clients}` : '没有画布连接'
+      clients.classList.toggle('online', health.clients > 0)
+      capabilities.textContent = pretty(caps)
+    } catch (error) {
+      service.textContent = '无法连接控制服务'
+      capabilities.textContent = String(error)
+    }
+  }
+  send.onclick = async () => {
+    try {
+      const response = await fetch('/api/commands/batch', {method:'POST',headers:{'Content-Type':'application/json'},body:payload.value})
+      result.textContent = pretty(await response.json())
+      load()
+    } catch (error) {
+      result.textContent = String(error)
+    }
+  }
+  load()
+</script>
+</body>
+</html>
